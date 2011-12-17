@@ -49,6 +49,7 @@ obj-y				+= lis3lv02d/
 obj-y				+= carma/
 obj-$(CONFIG_WL127X_RFKILL)	+= wl127x-rfkill.o
 obj-$(CONFIG_CUSTOM_VOLTAGE)	+= custom_voltage.o
+obj-$(CONFIG_LIVE_OC)		+= live_oc.o
 obj-$(CONFIG_APANIC)		+= apanic.o
 obj-$(CONFIG_SENSORS_AK8973)	+= ak8973.o
 obj-$(CONFIG_SENSORS_AK8975)	+= akm8975.o
