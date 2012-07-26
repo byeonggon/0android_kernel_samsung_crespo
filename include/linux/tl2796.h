@@ -47,6 +47,9 @@ struct s5p_panel_data {
 	u16 factory_v255_regs[3];
 	struct tl2796_color_adj color_adj;
 
+#ifdef CONFIG_FB_S3C_ARIES
+        const u16 **gamma22_table;
+#endif
 	const struct tl2796_gamma_adj_points *gamma_adj_points;
 #ifdef CONFIG_FB_VOODOO
 	struct gamma_entry *gamma_table;

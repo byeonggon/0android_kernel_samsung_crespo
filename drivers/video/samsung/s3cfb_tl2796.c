@@ -410,8 +410,122 @@ static void s6e63m0_panel_send_sequence(struct s5p_lcd *lcd,
 #endif
 }
 
+#ifdef CONFIG_FB_S3C_ARIES
+static int get_gamma_value_from_bl(int bl)
+{
+	int backlightlevel;
+
+	/* brightness setting from platform is from 0 to 255
+	 * But in this driver, brightness is only supported from 0 to 24 */
+
+	switch (bl) {
+	case 0:
+		backlightlevel = 0;
+		break;
+	case 1 ... 29:
+		backlightlevel = 0;
+		break;
+	case 30 ... 34:
+		backlightlevel = 1;
+		break;
+	case 35 ... 44:
+		backlightlevel = 2;
+		break;
+	case 45 ... 54:
+		backlightlevel = 3;
+		break;
+	case 55 ... 64:
+		backlightlevel = 4;
+		break;
+	case 65 ... 74:
+		backlightlevel = 5;
+		break;
+	case 75 ... 83:
+		backlightlevel = 6;
+		break;
+	case 84 ... 93:
+		backlightlevel = 7;
+		break;
+	case 94 ... 103:
+		backlightlevel = 8;
+		break;
+	case 104 ... 113:
+		backlightlevel = 9;
+		break;
+	case 114 ... 122:
+		backlightlevel = 10;
+		break;
+	case 123 ... 132:
+		backlightlevel = 11;
+		break;
+	case 133 ... 142:
+		backlightlevel = 12;
+		break;
+	case 143 ... 152:
+		backlightlevel = 13;
+		break;
+	case 153 ... 162:
+		backlightlevel = 14;
+		break;
+	case 163 ... 171:
+		backlightlevel = 15;
+		break;
+	case 172 ... 181:
+		backlightlevel = 16;
+		break;
+	case 182 ... 191:
+		backlightlevel = 17;
+		break;
+	case 192 ... 201:
+		backlightlevel = 18;
+		break;
+	case 202 ... 210:
+		backlightlevel = 19;
+		break;
+	case 211 ... 220:
+		backlightlevel = 20;
+		break;
+	case 221 ... 230:
+		backlightlevel = 21;
+		break;
+	case 231 ... 240:
+		backlightlevel = 22;
+		break;
+	case 241 ... 250:
+		backlightlevel = 23;
+		break;
+	case 251 ... 255:
+		backlightlevel = 24;
+		break;
+	default:
+		backlightlevel = 24;
+		break;
+	}
+	return backlightlevel;
+}
+#endif
+
 static void update_brightness(struct s5p_lcd *lcd)
 {
+#ifdef CONFIG_FB_S3C_ARIES
+	struct s5p_panel_data *pdata = lcd->data;
+	int gamma_value;
+
+	gamma_value = get_gamma_value_from_bl(lcd->bl);
+
+	s6e63m0_panel_send_sequence(lcd, pdata->gamma22_table[gamma_value]);
+
+	u16 gamma_update[7];
+
+	gamma_update[0] = 0x0FA;
+	gamma_update[1] = 0x103;
+	gamma_update[2] = SLEEPMSEC;
+	gamma_update[3] = 10;
+	gamma_update[4] = 0x029;
+	gamma_update[5] = ENDDEF;
+	gamma_update[6] = 0x0000;
+	s6e63m0_panel_send_sequence(lcd, gamma_update);
+#else
 	u16 gamma_regs[27];
 
 	gamma_regs[0] = 0x0FA;
@@ -424,6 +538,7 @@ static void update_brightness(struct s5p_lcd *lcd)
 	setup_gamma_regs(lcd, gamma_regs + 2);
 
 	s6e63m0_panel_send_sequence(lcd, gamma_regs);
+#endif
 }
 
 static void tl2796_ldi_enable(struct s5p_lcd *lcd)

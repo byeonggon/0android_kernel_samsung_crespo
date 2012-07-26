@@ -131,6 +131,13 @@ config FB_S3C_TL2796
         ---help---
           This enables support for Samsung TL2796 WVGA LCD panel
 
+config FB_S3C_ARIES
+        bool "Galaxy Color"
+        depends on FB_S3C_TL2796
+        default n
+        ---help---
+          This enables support galaxy color mods
+
 config FB_S3C_NT35580
         bool "NT35580"
         depends on FB_S3C
