@@ -59,6 +59,9 @@ struct tl2796_gamma_reg_offsets {
 struct s5p_lcd{
 	int ldi_enable;
 	int bl;
+#ifdef CONFIG_FB_S3C_ARIES
+	int cur_acl;
+#endif
 	const struct tl2796_gamma_adj_points *gamma_adj_points;
 	struct tl2796_gamma_reg_offsets gamma_reg_offsets;
 	u32 color_mult[3];
@@ -503,6 +506,60 @@ static int get_gamma_value_from_bl(int bl)
 	}
 	return backlightlevel;
 }
+
+static void update_acl(struct s5p_lcd *lcd, int gamma_value)
+{
+	struct s5p_panel_data *pdata = lcd->data;
+
+	if ((lcd->cur_acl == 0) && (gamma_value != 1)) {
+		s6e63m0_panel_send_sequence(lcd, pdata->acl_table[0]);
+		msleep(20);
+	}
+
+	switch (gamma_value) {
+	case 1:
+		if (lcd->cur_acl != 0) {
+			s6e63m0_panel_send_sequence(lcd, pdata->acl_table[1]);
+			lcd->cur_acl = 0;
+		}
+		break;
+	case 2 ... 12:
+		if (lcd->cur_acl != 40)	{
+			s6e63m0_panel_send_sequence(lcd, pdata->acl_table[2]);
+			lcd->cur_acl = 40;
+		}
+		break;
+	case 13:
+		if (lcd->cur_acl != 43)	{
+			s6e63m0_panel_send_sequence(lcd, pdata->acl_table[3]);
+			lcd->cur_acl = 43;
+		}
+		break;
+	case 14:
+		if (lcd->cur_acl != 45)	{
+			s6e63m0_panel_send_sequence(lcd, pdata->acl_table[4]);
+			lcd->cur_acl = 45;
+		}
+		break;
+	case 15:
+		if (lcd->cur_acl != 47)	{
+			s6e63m0_panel_send_sequence(lcd, pdata->acl_table[5]);
+			lcd->cur_acl = 47;
+		}
+		break;
+	case 16:
+		if (lcd->cur_acl != 48)	{
+			s6e63m0_panel_send_sequence(lcd, pdata->acl_table[6]);
+			lcd->cur_acl = 48;
+		}
+		break;
+	default:
+		if (lcd->cur_acl != 50)	{
+			s6e63m0_panel_send_sequence(lcd, pdata->acl_table[7]);
+			lcd->cur_acl = 50;
+		}
+	}
+}
 #endif
 
 static void update_brightness(struct s5p_lcd *lcd)
@@ -512,6 +569,8 @@ static void update_brightness(struct s5p_lcd *lcd)
 	int gamma_value;
 
 	gamma_value = get_gamma_value_from_bl(lcd->bl);
+
+	update_acl(lcd, gamma_value);
 
 	s6e63m0_panel_send_sequence(lcd, pdata->gamma22_table[gamma_value]);
 
@@ -1233,6 +1292,9 @@ static int __devinit tl2796_probe(struct spi_device *spi)
 
 	if (!lcd->data->gamma_table || !lcd->data->seq_display_set ||
 		!lcd->data->seq_etc_set || !lcd->data->standby_on ||
+#ifdef CONFIG_FB_S3C_ARIES
+		!lcd->data->acl_table ||
+#endif
 		!lcd->data->standby_off) {
 		dev_err(lcd->dev, "Invalid platform data\n");
 		ret = -EINVAL;
@@ -1251,6 +1313,8 @@ static int __devinit tl2796_probe(struct spi_device *spi)
 		ret = -EINVAL;
 		goto err_setup;
 	}
+
+	lcd->cur_acl = 0;
 
 	lcd->bl_dev->props.max_brightness = 255;
 	lcd->bl_dev->props.brightness = lcd->bl;

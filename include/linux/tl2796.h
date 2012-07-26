@@ -49,6 +49,7 @@ struct s5p_panel_data {
 
 #ifdef CONFIG_FB_S3C_ARIES
         const u16 **gamma22_table;
+	const u16 **acl_table;
 #endif
 	const struct tl2796_gamma_adj_points *gamma_adj_points;
 #ifdef CONFIG_FB_VOODOO
