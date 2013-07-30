@@ -1,2 +1,2 @@
-0android_kernel_samsung_crespo
-==============================
+Xensation_kernel_samsung_crespo (based on marmite)
+=============================
