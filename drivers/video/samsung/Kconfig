@@ -18,13 +18,6 @@ config FB_S3C_INCREASED_HZ
         depends on FB_S3C
 	default n
 
-config FB_VOODOO
-	bool "Voodoo Color"
-	depends on FB_S3C_TL2796
-	default y
-	---help---
-	  This enables support Voodoo color mods
-
 config FB_VOODOO_DEBUG_LOG
 	bool "Verbose Super AMOLED driver logs"
 	depends on FB_VOODOO
@@ -130,13 +123,6 @@ config FB_S3C_TL2796
         select SPI_BITBANG
         ---help---
           This enables support for Samsung TL2796 WVGA LCD panel
-
-config FB_S3C_ARIES
-        bool "Galaxy Color"
-        depends on FB_S3C_TL2796
-        default n
-        ---help---
-          This enables support galaxy color mods
 
 config FB_S3C_NT35580
         bool "NT35580"

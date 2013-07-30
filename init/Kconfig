@@ -36,6 +36,20 @@ config FOR_CYANOGENMOD
 
 	  This sets the cm_support sysfs to work for CM by default.
 
+config FB_VOODOO
+	bool "Voodoo Color"
+	depends on FB_S3C_TL2796
+	default y
+	---help---
+	  This enables support Voodoo color mods
+
+config FB_S3C_ARIES
+        bool "Galaxy Color"
+        depends on FB_S3C_TL2796
+        default n
+        ---help---
+          This enables support galaxy color mods
+
 menu "General setup"
 
 config EXPERIMENTAL
