@@ -173,10 +173,6 @@ static const u16 s6e63m0_SEQ_ETC_SETTING_SAMSUNG[] = {
 	ENDDEF, 0x0000
 };
 #else
-// Secondary user-tunable color multiplier
-u32 color_mult[3] = { U32_MAX, U32_MAX, U32_MAX };
-
-// v0 offset hack from supercurio's "Voodoo Color"
 u32 hacky_v1_offset[3] = {0, 0, 0};
 #endif
 
